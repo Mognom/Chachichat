@@ -1,7 +1,7 @@
 import sqlite3
 
 def insertar(alta):
-	conn = sqlite3.connect('ejemplo.db')
+	conn = sqlite3.connect('chachidb.db')
 	c = conn.cursor()
 	c.execute(''' INSERT INTO usuarios VALUES (?, ?)''', alta)
 	conn.commit()
