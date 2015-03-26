@@ -27,11 +27,3 @@ def join(name):
 	
 	#Respuesta
 	print (r.json())
-
-def host():
-	payload = json.dumps({'name' : name)
-	headers = {'Content-type': 'application/json'}
-	r = requests.put('http://127.0.0.1:5000/chachichat/host', data=payload, headers = headers)
-	
-	#Respuesta
-	print (r.json())

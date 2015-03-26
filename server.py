@@ -17,6 +17,9 @@ def login():
 	c.execute("SELECT password FROM usuarios WHERE username = ?", user)
 	if c.fetchone()[0] == request.json['pass']:
 		
+		ip = request.remote_addr
+		log = (user, ip)
+		c.execute (''' INSERT INTO logged VALUES (?, ?)''', log)
 		return jsonify({'result' : True})
 
 	else:
@@ -40,19 +43,27 @@ def register():
 def join():
 	if not (request.json and 'name' in request.json):
 		abort(400)
+	user = (request.json["user"],)
+	try:
+		c.execute( '''SELECT ipaddress FROM logged WHERE username = ?''',user)
+		ip = c.fetchone()[0]
+		if ip == None:
+			return jsonify({'result' : False})
+		#If name is hosting return True else return false
+		return jsonify({'result' : True, 'ipaddress' : ip})
+	except:
+		return jsonify({'result' : False})
 
-	#If name is hosting return True else return false
-	return jsonify({'result' : True, 'conver' : "ip"})
-	return jsonify({'result' : False})
-
-@app.route('/chachichat/host', methods=['PUT'])
-def host():
+@app.route('/chachichat/logout', methods = ['DELETE'])
+def logout():
 	if not (request.json and 'name' in request.json):
 		abort(400)
-
-	#if not already hosting, save ip on db and return true
-	return jsonify({'result' : True})
-	return jsonify({'result' : False})
-
+	user = (request.json["user"],)
+	try:
+		c.execute( '''DELETE FROM logged WHERE username = ?''', user)
+		return jsonify({'result' : True})
+	except:
+		return jsonify({'result' : False})
+		
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', debug=True)
